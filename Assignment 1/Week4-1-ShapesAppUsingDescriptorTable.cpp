@@ -550,8 +550,8 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
     GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(1.0f, 1.0f, 7.0f, 20, 20);
     GeometryGenerator::MeshData cone = geoGen.CreateCone(1.0f, 3.5f, 20);
-    GeometryGenerator::MeshData triPrism = geoGen.CreateTriangularPrism(1.0f, 1.0f, 1.0f);
-    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 0.7f, 0.3, 1, 6);
+    GeometryGenerator::MeshData triPrism = geoGen.CreateTriangularPrism(1, 1, 1);
+    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 0.0f, 2, 2, 6);
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1, 1, 1);
     GeometryGenerator::MeshData torus = geoGen.CreateTorus(.1f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0f, 1.0f, 2.0f);
@@ -705,7 +705,7 @@ void ShapesApp::BuildShapeGeometry()
     for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = diamond.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::LightSkyBlue);
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::Violet);
     }
 
     for (size_t i = 0; i < pyramid.Vertices.size(); ++i, ++k)
@@ -840,15 +840,15 @@ void ShapesApp::BuildRenderItems()
     x1 = z1 = 10;
     float radius = sqrt(x1 * x1 + z1 * z1);
 
-    auto boxRitem = std::make_unique<RenderItem>();
-    XMStoreFloat4x4(&boxRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
-    boxRitem->ObjCBIndex = 0;
-    boxRitem->Geo = mGeometries["shapeGeo"].get();
-    boxRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-    boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
-    boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
-    boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
-    mAllRitems.push_back(std::move(boxRitem));
+    auto pyramidRitem = std::make_unique<RenderItem>();
+    XMStoreFloat4x4(&pyramidRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixRotationY(-nintydegrees)* XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+    pyramidRitem->ObjCBIndex = 0;
+    pyramidRitem->Geo = mGeometries["shapeGeo"].get();
+    pyramidRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    pyramidRitem->IndexCount = pyramidRitem->Geo->DrawArgs["pyramid"].IndexCount;
+    pyramidRitem->StartIndexLocation = pyramidRitem->Geo->DrawArgs["pyramid"].StartIndexLocation;
+    pyramidRitem->BaseVertexLocation = pyramidRitem->Geo->DrawArgs["pyramid"].BaseVertexLocation;
+    mAllRitems.push_back(std::move(pyramidRitem));
 
     auto gridRitem = std::make_unique<RenderItem>();
     gridRitem->World = MathHelper::Identity4x4();
@@ -875,6 +875,37 @@ void ShapesApp::BuildRenderItems()
 
 
     UINT objCBIndex = 2;
+    //Front Wall
+    for (int i = 0; i < 2; i++)
+    {
+
+        float theta = i * nintydegrees;
+
+
+        if (i < 2)
+        {
+            auto FrontWall = std::make_unique<RenderItem>();
+            XMStoreFloat4x4(&FrontWall->World, XMMatrixScaling(7.0f, 5.0f, 1.0f) * XMMatrixTranslation(5.0f-10*i, 2.5f, -10.0f));
+            FrontWall->ObjCBIndex = objCBIndex++;
+            FrontWall->Geo = mGeometries["shapeGeo"].get();
+            FrontWall->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            FrontWall->IndexCount = FrontWall->Geo->DrawArgs["box"].IndexCount;
+            FrontWall->StartIndexLocation = FrontWall->Geo->DrawArgs["box"].StartIndexLocation;
+            FrontWall->BaseVertexLocation = FrontWall->Geo->DrawArgs["box"].BaseVertexLocation;
+            mAllRitems.push_back(std::move(FrontWall));
+
+            auto walltopRitem = std::make_unique<RenderItem>();
+            XMStoreFloat4x4(&walltopRitem->World, XMMatrixScaling(20.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 5.3f, -10.0f));
+            walltopRitem->ObjCBIndex = objCBIndex++;
+            walltopRitem->Geo = mGeometries["shapeGeo"].get();
+            walltopRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            walltopRitem->IndexCount = walltopRitem->Geo->DrawArgs["prism"].IndexCount;
+            walltopRitem->StartIndexLocation = walltopRitem->Geo->DrawArgs["prism"].StartIndexLocation;
+            walltopRitem->BaseVertexLocation = walltopRitem->Geo->DrawArgs["prism"].BaseVertexLocation;
+            mAllRitems.push_back(std::move(walltopRitem));
+        }
+    }
+
 
     //walls
     for (int i = 0; i < 3; i++)
@@ -985,6 +1016,28 @@ void ShapesApp::BuildRenderItems()
 
 
     }
+
+    // door
+        auto wedgeRitem = std::make_unique<RenderItem>();
+        XMStoreFloat4x4(&wedgeRitem->World, XMMatrixScaling(5.0f, 1.0f, 1.5f) * XMMatrixRotationY(-nintydegrees)* XMMatrixTranslation(0.0f, 0.5f, -12.5f));
+        wedgeRitem->ObjCBIndex = objCBIndex++;
+        wedgeRitem->Geo = mGeometries["shapeGeo"].get();
+        wedgeRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        wedgeRitem->IndexCount = wedgeRitem->Geo->DrawArgs["wedge"].IndexCount;
+        wedgeRitem->StartIndexLocation = wedgeRitem->Geo->DrawArgs["wedge"].StartIndexLocation;
+        wedgeRitem->BaseVertexLocation = wedgeRitem->Geo->DrawArgs["wedge"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(wedgeRitem));
+    //Diamond
+        auto DiamondRitem = std::make_unique<RenderItem>();
+        XMStoreFloat4x4(&DiamondRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)* XMMatrixTranslation(0.0f, 3.5f, 0.0f));
+        DiamondRitem->ObjCBIndex = objCBIndex++;
+        DiamondRitem->Geo = mGeometries["shapeGeo"].get();
+        DiamondRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        DiamondRitem->IndexCount = DiamondRitem->Geo->DrawArgs["diamond"].IndexCount;
+        DiamondRitem->StartIndexLocation = DiamondRitem->Geo->DrawArgs["diamond"].StartIndexLocation;
+        DiamondRitem->BaseVertexLocation = DiamondRitem->Geo->DrawArgs["diamond"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(DiamondRitem));
+    //halfsphere
 
 
     // All the render items are opaque.

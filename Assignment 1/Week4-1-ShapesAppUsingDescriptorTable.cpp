@@ -876,6 +876,37 @@ void ShapesApp::BuildRenderItems()
 
 
     UINT objCBIndex = 2;
+    //Front Wall
+    for (int i = 0; i < 2; i++)
+    {
+
+        float theta = i * nintydegrees;
+
+
+        if (i < 2)
+        {
+            auto FrontWall = std::make_unique<RenderItem>();
+            XMStoreFloat4x4(&FrontWall->World, XMMatrixScaling(7.0f, 5.0f, 1.0f) * XMMatrixTranslation(5.0f-10*i, 2.5f, -10.0f));
+            FrontWall->ObjCBIndex = objCBIndex++;
+            FrontWall->Geo = mGeometries["shapeGeo"].get();
+            FrontWall->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            FrontWall->IndexCount = FrontWall->Geo->DrawArgs["box"].IndexCount;
+            FrontWall->StartIndexLocation = FrontWall->Geo->DrawArgs["box"].StartIndexLocation;
+            FrontWall->BaseVertexLocation = FrontWall->Geo->DrawArgs["box"].BaseVertexLocation;
+            mAllRitems.push_back(std::move(FrontWall));
+
+            auto walltopRitem = std::make_unique<RenderItem>();
+            XMStoreFloat4x4(&walltopRitem->World, XMMatrixScaling(20.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 5.0f, -10.0f));
+            walltopRitem->ObjCBIndex = objCBIndex++;
+            walltopRitem->Geo = mGeometries["shapeGeo"].get();
+            walltopRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            walltopRitem->IndexCount = walltopRitem->Geo->DrawArgs["box"].IndexCount;
+            walltopRitem->StartIndexLocation = walltopRitem->Geo->DrawArgs["box"].StartIndexLocation;
+            walltopRitem->BaseVertexLocation = walltopRitem->Geo->DrawArgs["box"].BaseVertexLocation;
+            mAllRitems.push_back(std::move(walltopRitem));
+        }
+    }
+
 
     //walls
     for (int i = 0; i < 3; i++)
@@ -940,6 +971,17 @@ void ShapesApp::BuildRenderItems()
 
     }
 
+    // door
+        auto wedgeRitem = std::make_unique<RenderItem>();
+        XMStoreFloat4x4(&wedgeRitem->World, XMMatrixScaling(5.0f, 1.0f, 1.5f) * XMMatrixRotationY(-nintydegrees)* XMMatrixTranslation(0.0f, 0.5f, -12.5f));
+        wedgeRitem->ObjCBIndex = objCBIndex++;
+        wedgeRitem->Geo = mGeometries["shapeGeo"].get();
+        wedgeRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        wedgeRitem->IndexCount = wedgeRitem->Geo->DrawArgs["wedge"].IndexCount;
+        wedgeRitem->StartIndexLocation = wedgeRitem->Geo->DrawArgs["wedge"].StartIndexLocation;
+        wedgeRitem->BaseVertexLocation = wedgeRitem->Geo->DrawArgs["wedge"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(wedgeRitem));
+    
 
     // All the render items are opaque.
     for (auto& e : mAllRitems)

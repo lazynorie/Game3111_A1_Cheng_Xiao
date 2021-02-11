@@ -555,7 +555,7 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1, 1, 1);
     GeometryGenerator::MeshData torus = geoGen.CreateTorus(.1f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0f, 1.0f, 2.0f);
-    GeometryGenerator::MeshData halfsphere = geoGen.CreateHalfSphere(0.5f, 20, 20);
+ 
 
 
     //
@@ -574,7 +574,7 @@ void ShapesApp::BuildShapeGeometry()
     UINT pyramidVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size();
     UINT torusVertexOffset = pyramidVertexOffset + (UINT)pyramid.Vertices.size();
     UINT wedgeVertexOffset = torusVertexOffset + (UINT)torus.Vertices.size();
-    UINT halfsphereVertexOffset = wedgeVertexOffset + (UINT)wedge.Vertices.size();
+    
     // Cache the starting index for each object in the concatenated index buffer.
     UINT boxIndexOffset = 0;
     UINT gridIndexOffset = (UINT)box.Indices32.size();
@@ -586,7 +586,7 @@ void ShapesApp::BuildShapeGeometry()
     UINT pyramidIndexOffset = diamondIndexOffset + (UINT)diamond.Indices32.size();
     UINT torusIndexOffset = pyramidIndexOffset + (UINT)pyramid.Indices32.size();
     UINT wedgeIndexOffset = torusIndexOffset + (UINT)torus.Indices32.size();
-    UINT halfsphereIndexOffset = wedgeIndexOffset + (UINT)wedge.Indices32.size();
+    
     // Define the SubmeshGeometry that cover different 
     // regions of the vertex/index buffers.
 
@@ -610,10 +610,7 @@ void ShapesApp::BuildShapeGeometry()
     sphereSubmesh.StartIndexLocation = sphereIndexOffset;
     sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
 
-    SubmeshGeometry halfsphereSubmesh;
-    halfsphereSubmesh.IndexCount = (UINT)halfsphere.Indices32.size();
-    halfsphereSubmesh.StartIndexLocation = halfsphereIndexOffset;
-    halfsphereSubmesh.BaseVertexLocation = halfsphereVertexOffset;
+
 
     SubmeshGeometry cylinderSubmesh;
     cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
@@ -660,8 +657,8 @@ void ShapesApp::BuildShapeGeometry()
         diamond.Vertices.size() +
         pyramid.Vertices.size() +
         torus.Vertices.size() +
-        wedge.Vertices.size() +
-        halfsphere.Vertices.size();
+        wedge.Vertices.size();
+        
 
     std::vector<Vertex> vertices(totalVertexCount);
 
@@ -724,11 +721,7 @@ void ShapesApp::BuildShapeGeometry()
         vertices[k].Pos = wedge.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(DirectX::Colors::Gold);
     }
-    for (size_t i = 0; i < halfsphere.Vertices.size(); ++i, ++k)
-    {
-        vertices[k].Pos = halfsphere.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Crimson);
-    }
+
 
     std::vector<std::uint16_t> indices;
     indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
@@ -741,7 +734,7 @@ void ShapesApp::BuildShapeGeometry()
     indices.insert(indices.end(), std::begin(pyramid.GetIndices16()), std::end(pyramid.GetIndices16()));
     indices.insert(indices.end(), std::begin(torus.GetIndices16()), std::end(torus.GetIndices16()));
     indices.insert(indices.end(), std::begin(wedge.GetIndices16()), std::end(wedge.GetIndices16()));
-    indices.insert(indices.end(), std::begin(halfsphere.GetIndices16()), std::end(halfsphere.GetIndices16()));
+
 
     const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
     const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
@@ -776,7 +769,7 @@ void ShapesApp::BuildShapeGeometry()
     geo->DrawArgs["pyramid"] = pyramidSubmesh;
     geo->DrawArgs["torus"] = torusSubmesh;
     geo->DrawArgs["wedge"] = wedgeSubmesh;
-    geo->DrawArgs["halfsphere"] = halfsphereSubmesh;
+    
 
     mGeometries[geo->Name] = std::move(geo);
 }
@@ -1037,7 +1030,7 @@ void ShapesApp::BuildRenderItems()
         DiamondRitem->StartIndexLocation = DiamondRitem->Geo->DrawArgs["diamond"].StartIndexLocation;
         DiamondRitem->BaseVertexLocation = DiamondRitem->Geo->DrawArgs["diamond"].BaseVertexLocation;
         mAllRitems.push_back(std::move(DiamondRitem));
-    //halfsphere
+  
 
 
     // All the render items are opaque.

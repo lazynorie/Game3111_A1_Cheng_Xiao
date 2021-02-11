@@ -77,7 +77,6 @@ public:
 	
 	MeshData CreateBox(float width, float height, float depth, uint32 numSubdivisions);
 	MeshData CreateSphere(float radius, uint32 sliceCount, uint32 stackCount);
-	MeshData CreateHalfSphere(float radius, uint32 sliceCount, uint32 stackCount);
 	MeshData CreateGeosphere(float radius, uint32 numSubdivisions);
 	MeshData CreateTorus(float tubeRadius, float ringRadius, uint32 sliceCount, uint32 stackCount);
 	MeshData CreateCone(float bottomRadius, float height, uint32 sliceCount);

@@ -551,7 +551,7 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(1.0f, 1.0f, 7.0f, 20, 20);
     GeometryGenerator::MeshData cone = geoGen.CreateCone(1.0f, 3.5f, 20);
     GeometryGenerator::MeshData triPrism = geoGen.CreateTriangularPrism(1, 1, 1);
-    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 0.0f, 2, 2, 6);
+    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 0.0f, 2, 2, 5);
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1, 1, 1);
     GeometryGenerator::MeshData torus = geoGen.CreateTorus(.1f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0f, 1.0f, 2.0f);

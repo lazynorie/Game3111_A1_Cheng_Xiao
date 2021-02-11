@@ -15,8 +15,7 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 const int gNumFrameResources = 3;
-const float width = 50;
-const float depth = 50;
+
 
 // Lightweight structure stores parameters to draw a shape.  This will
 // vary from app-to-app.
@@ -547,11 +546,11 @@ void ShapesApp::BuildShapeGeometry()
 {
     GeometryGenerator geoGen;
     GeometryGenerator::MeshData box = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3);
-    GeometryGenerator::MeshData grid = geoGen.CreateGrid(width, depth, 60, 40);
+    GeometryGenerator::MeshData grid = geoGen.CreateGrid(30.0f, 30.0f, 60, 40);
     GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
     GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(1.0f, 1.0f, 7.0f, 20, 20);
     GeometryGenerator::MeshData cone = geoGen.CreateCone(1.0f, 3.5f, 20);
-    GeometryGenerator::MeshData triPrism = geoGen.CreateTriangularPrism(1, 1, 1);
+    GeometryGenerator::MeshData triPrism = geoGen.CreateTriangularPrism(1.0f, 1.0f, 1.0f);
     GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 0.7f, 0.3, 1, 6);
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1, 1, 1);
     GeometryGenerator::MeshData torus = geoGen.CreateTorus(.1f, 1.0f, 20, 20);
@@ -906,6 +905,40 @@ void ShapesApp::BuildRenderItems()
             walltopRitem->BaseVertexLocation = walltopRitem->Geo->DrawArgs["box"].BaseVertexLocation;
             mAllRitems.push_back(std::move(walltopRitem));
         }
+    }
+
+    //wall brick
+    for (int i = 0; i < 11; i++)
+    {
+        auto brickRitem = std::make_unique<RenderItem>();
+        XMStoreFloat4x4(&brickRitem->World, XMMatrixScaling(1.0f, 1.5f, 1.0f) * XMMatrixTranslation(-10.0f, 5.5f, 10.0f - 2*i));
+        brickRitem->ObjCBIndex = objCBIndex++;
+        brickRitem->Geo = mGeometries["shapeGeo"].get();
+        brickRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        brickRitem->IndexCount = brickRitem->Geo->DrawArgs["box"].IndexCount;
+        brickRitem->StartIndexLocation = brickRitem->Geo->DrawArgs["box"].StartIndexLocation;
+        brickRitem->BaseVertexLocation = brickRitem->Geo->DrawArgs["box"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(brickRitem));
+
+        auto brickRitem1 = std::make_unique<RenderItem>();
+        XMStoreFloat4x4(&brickRitem1->World, XMMatrixScaling(1.0f, 1.5f, 1.0f) * XMMatrixTranslation(10.0f, 5.5f, 10.0f - 2 * i));
+        brickRitem1->ObjCBIndex = objCBIndex++;
+        brickRitem1->Geo = mGeometries["shapeGeo"].get();
+        brickRitem1->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        brickRitem1->IndexCount = brickRitem1->Geo->DrawArgs["box"].IndexCount;
+        brickRitem1->StartIndexLocation = brickRitem1->Geo->DrawArgs["box"].StartIndexLocation;
+        brickRitem1->BaseVertexLocation = brickRitem1->Geo->DrawArgs["box"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(brickRitem1));
+
+        auto brickRitem2 = std::make_unique<RenderItem>();
+        XMStoreFloat4x4(&brickRitem2->World, XMMatrixScaling(1.0f, 1.5f, 1.0f) * XMMatrixTranslation(10.0f - 2 * i, 5.5f, 10.0f));
+        brickRitem2->ObjCBIndex = objCBIndex++;
+        brickRitem2->Geo = mGeometries["shapeGeo"].get();
+        brickRitem2->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        brickRitem2->IndexCount = brickRitem2->Geo->DrawArgs["box"].IndexCount;
+        brickRitem2->StartIndexLocation = brickRitem2->Geo->DrawArgs["box"].StartIndexLocation;
+        brickRitem2->BaseVertexLocation = brickRitem2->Geo->DrawArgs["box"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(brickRitem2));
     }
 
 

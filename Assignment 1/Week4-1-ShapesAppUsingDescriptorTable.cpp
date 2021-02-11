@@ -554,7 +554,7 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData triPrism = geoGen.CreateTriangularPrism(1, 1, 1);
     GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 0.7f, 0.3, 1, 6);
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1, 1, 1);
-    GeometryGenerator::MeshData torus = geoGen.CreateTorus(0.3f, 2.0f, 20, 20);
+    GeometryGenerator::MeshData torus = geoGen.CreateTorus(.1f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0f, 1.0f, 2.0f);
     GeometryGenerator::MeshData halfsphere = geoGen.CreateHalfSphere(0.5f, 20, 20);
 
@@ -908,6 +908,8 @@ void ShapesApp::BuildRenderItems()
         }
     }
 
+
+
     //towers
     for (int i = 0; i < 4; i++)
     {
@@ -927,7 +929,6 @@ void ShapesApp::BuildRenderItems()
         mAllRitems.push_back(std::move(towerRitem));
 
         auto ttopRitem = std::make_unique<RenderItem>();
-        //XMMATRIX ttopWorld = XMMatrixScaling(2.0f, 1.0f, 2.0f) * XMMatrixTranslation(cRadius, 10.0f, sRadius);
         XMMATRIX ttopWorld = XMMatrixScaling(2.5f, 1.0f, 2.5f) * XMMatrixTranslation(cRadius, 8.5f, sRadius);
         XMStoreFloat4x4(&ttopRitem->World, ttopWorld);
         ttopRitem->ObjCBIndex = objCBIndex++;
@@ -937,6 +938,18 @@ void ShapesApp::BuildRenderItems()
         ttopRitem->StartIndexLocation = ttopRitem->Geo->DrawArgs["cone"].StartIndexLocation;
         ttopRitem->BaseVertexLocation = ttopRitem->Geo->DrawArgs["cone"].BaseVertexLocation;
         mAllRitems.push_back(std::move(ttopRitem));
+
+        auto donutRitem = std::make_unique<RenderItem>();
+        XMMATRIX donutWorld = XMMatrixScaling(2.5f, 3.0f, 2.5f) * XMMatrixTranslation(cRadius, 7.0f, sRadius);
+        XMStoreFloat4x4(&donutRitem->World, donutWorld);
+        donutRitem->ObjCBIndex = objCBIndex++;
+        donutRitem->Geo = mGeometries["shapeGeo"].get();
+        donutRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        donutRitem->IndexCount = donutRitem->Geo->DrawArgs["torus"].IndexCount;
+        donutRitem->StartIndexLocation = donutRitem->Geo->DrawArgs["torus"].StartIndexLocation;
+        donutRitem->BaseVertexLocation = donutRitem->Geo->DrawArgs["torus"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(donutRitem));
+
 
     }
 

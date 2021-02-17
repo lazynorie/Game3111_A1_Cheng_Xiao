@@ -555,6 +555,8 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1, 1, 1);
     GeometryGenerator::MeshData torus = geoGen.CreateTorus(.1f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0f, 1.0f, 2.0f);
+
+    GeometryGenerator::MeshData box1 = geoGen.CreateBox1(1.0f, 1.0f, 1.0f, 3);
  
 
 
@@ -574,6 +576,9 @@ void ShapesApp::BuildShapeGeometry()
     UINT pyramidVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size();
     UINT torusVertexOffset = pyramidVertexOffset + (UINT)pyramid.Vertices.size();
     UINT wedgeVertexOffset = torusVertexOffset + (UINT)torus.Vertices.size();
+
+    UINT box1VertexOffset = wedgeVertexOffset + (UINT)wedge.Vertices.size();
+
     
     // Cache the starting index for each object in the concatenated index buffer.
     UINT boxIndexOffset = 0;
@@ -586,6 +591,8 @@ void ShapesApp::BuildShapeGeometry()
     UINT pyramidIndexOffset = diamondIndexOffset + (UINT)diamond.Indices32.size();
     UINT torusIndexOffset = pyramidIndexOffset + (UINT)pyramid.Indices32.size();
     UINT wedgeIndexOffset = torusIndexOffset + (UINT)torus.Indices32.size();
+
+    UINT box1IndexOffset = wedgeIndexOffset + (UINT)wedge.Indices32.size();
     
     // Define the SubmeshGeometry that cover different 
     // regions of the vertex/index buffers.
@@ -609,8 +616,6 @@ void ShapesApp::BuildShapeGeometry()
     sphereSubmesh.IndexCount = (UINT)sphere.Indices32.size();
     sphereSubmesh.StartIndexLocation = sphereIndexOffset;
     sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
-
-
 
     SubmeshGeometry cylinderSubmesh;
     cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
@@ -642,6 +647,11 @@ void ShapesApp::BuildShapeGeometry()
     torusSubmesh.StartIndexLocation = torusIndexOffset;
     torusSubmesh.BaseVertexLocation = torusVertexOffset;
 
+    SubmeshGeometry box1Submesh;
+    box1Submesh.IndexCount = (UINT)box1.Indices32.size();
+    box1Submesh.StartIndexLocation = box1IndexOffset;
+    box1Submesh.BaseVertexLocation = box1VertexOffset;
+
     //
     // Extract the vertex elements we are interested in and pack the
     // vertices of all the meshes into one vertex buffer.
@@ -649,6 +659,7 @@ void ShapesApp::BuildShapeGeometry()
 
     auto totalVertexCount =
         box.Vertices.size() +
+
         grid.Vertices.size() +
         sphere.Vertices.size() +
         cylinder.Vertices.size() +
@@ -657,7 +668,9 @@ void ShapesApp::BuildShapeGeometry()
         diamond.Vertices.size() +
         pyramid.Vertices.size() +
         torus.Vertices.size() +
-        wedge.Vertices.size();
+        wedge.Vertices.size()+
+
+        box1.Vertices.size() ;
         
 
     std::vector<Vertex> vertices(totalVertexCount);
@@ -716,10 +729,17 @@ void ShapesApp::BuildShapeGeometry()
         vertices[k].Pos = torus.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(DirectX::Colors::Gold);
     }
+
     for (size_t i = 0; i < wedge.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = wedge.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(DirectX::Colors::Gold);
+    }
+
+    for (size_t i = 0; i < box1.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = box1.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::SlateGray);
     }
 
 
@@ -734,6 +754,9 @@ void ShapesApp::BuildShapeGeometry()
     indices.insert(indices.end(), std::begin(pyramid.GetIndices16()), std::end(pyramid.GetIndices16()));
     indices.insert(indices.end(), std::begin(torus.GetIndices16()), std::end(torus.GetIndices16()));
     indices.insert(indices.end(), std::begin(wedge.GetIndices16()), std::end(wedge.GetIndices16()));
+
+    indices.insert(indices.end(), std::begin(box1.GetIndices16()), std::end(box1.GetIndices16()));
+
 
 
     const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
@@ -769,6 +792,7 @@ void ShapesApp::BuildShapeGeometry()
     geo->DrawArgs["pyramid"] = pyramidSubmesh;
     geo->DrawArgs["torus"] = torusSubmesh;
     geo->DrawArgs["wedge"] = wedgeSubmesh;
+    geo->DrawArgs["box1"] = box1Submesh;
     
 
     mGeometries[geo->Name] = std::move(geo);
@@ -924,14 +948,15 @@ void ShapesApp::BuildRenderItems()
             walltopRitem->ObjCBIndex = objCBIndex++;
             walltopRitem->Geo = mGeometries["shapeGeo"].get();
             walltopRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-            walltopRitem->IndexCount = walltopRitem->Geo->DrawArgs["box"].IndexCount;
-            walltopRitem->StartIndexLocation = walltopRitem->Geo->DrawArgs["box"].StartIndexLocation;
-            walltopRitem->BaseVertexLocation = walltopRitem->Geo->DrawArgs["box"].BaseVertexLocation;
+            walltopRitem->IndexCount = walltopRitem->Geo->DrawArgs["box1"].IndexCount;
+            walltopRitem->StartIndexLocation = walltopRitem->Geo->DrawArgs["box1"].StartIndexLocation;
+            walltopRitem->BaseVertexLocation = walltopRitem->Geo->DrawArgs["box1"].BaseVertexLocation;
             mAllRitems.push_back(std::move(walltopRitem));
         }
     }
 
-    //wall brick
+    //battlements
+
     for (int i = 0; i < 11; i++)
     {
         auto brickRitem = std::make_unique<RenderItem>();
@@ -939,9 +964,9 @@ void ShapesApp::BuildRenderItems()
         brickRitem->ObjCBIndex = objCBIndex++;
         brickRitem->Geo = mGeometries["shapeGeo"].get();
         brickRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-        brickRitem->IndexCount = brickRitem->Geo->DrawArgs["box"].IndexCount;
-        brickRitem->StartIndexLocation = brickRitem->Geo->DrawArgs["box"].StartIndexLocation;
-        brickRitem->BaseVertexLocation = brickRitem->Geo->DrawArgs["box"].BaseVertexLocation;
+        brickRitem->IndexCount = brickRitem->Geo->DrawArgs["box1"].IndexCount;
+        brickRitem->StartIndexLocation = brickRitem->Geo->DrawArgs["box1"].StartIndexLocation;
+        brickRitem->BaseVertexLocation = brickRitem->Geo->DrawArgs["box1"].BaseVertexLocation;
         mAllRitems.push_back(std::move(brickRitem));
 
         auto brickRitem1 = std::make_unique<RenderItem>();
@@ -949,9 +974,9 @@ void ShapesApp::BuildRenderItems()
         brickRitem1->ObjCBIndex = objCBIndex++;
         brickRitem1->Geo = mGeometries["shapeGeo"].get();
         brickRitem1->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-        brickRitem1->IndexCount = brickRitem1->Geo->DrawArgs["box"].IndexCount;
-        brickRitem1->StartIndexLocation = brickRitem1->Geo->DrawArgs["box"].StartIndexLocation;
-        brickRitem1->BaseVertexLocation = brickRitem1->Geo->DrawArgs["box"].BaseVertexLocation;
+        brickRitem1->IndexCount = brickRitem1->Geo->DrawArgs["box1"].IndexCount;
+        brickRitem1->StartIndexLocation = brickRitem1->Geo->DrawArgs["box1"].StartIndexLocation;
+        brickRitem1->BaseVertexLocation = brickRitem1->Geo->DrawArgs["box1"].BaseVertexLocation;
         mAllRitems.push_back(std::move(brickRitem1));
 
         auto brickRitem2 = std::make_unique<RenderItem>();
@@ -959,10 +984,20 @@ void ShapesApp::BuildRenderItems()
         brickRitem2->ObjCBIndex = objCBIndex++;
         brickRitem2->Geo = mGeometries["shapeGeo"].get();
         brickRitem2->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-        brickRitem2->IndexCount = brickRitem2->Geo->DrawArgs["box"].IndexCount;
-        brickRitem2->StartIndexLocation = brickRitem2->Geo->DrawArgs["box"].StartIndexLocation;
-        brickRitem2->BaseVertexLocation = brickRitem2->Geo->DrawArgs["box"].BaseVertexLocation;
+        brickRitem2->IndexCount = brickRitem2->Geo->DrawArgs["box1"].IndexCount;
+        brickRitem2->StartIndexLocation = brickRitem2->Geo->DrawArgs["box1"].StartIndexLocation;
+        brickRitem2->BaseVertexLocation = brickRitem2->Geo->DrawArgs["box1"].BaseVertexLocation;
         mAllRitems.push_back(std::move(brickRitem2));
+
+        auto brickRitem3 = std::make_unique<RenderItem>();
+        XMStoreFloat4x4(&brickRitem3->World, XMMatrixScaling(1.0f, 1.5f, 1.0f) * XMMatrixTranslation(10.0f - 2 * i, 5.5f, -10.0f));
+        brickRitem3->ObjCBIndex = objCBIndex++;
+        brickRitem3->Geo = mGeometries["shapeGeo"].get();
+        brickRitem3->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        brickRitem3->IndexCount = brickRitem3->Geo->DrawArgs["box1"].IndexCount;
+        brickRitem3->StartIndexLocation = brickRitem3->Geo->DrawArgs["box1"].StartIndexLocation;
+        brickRitem3->BaseVertexLocation = brickRitem3->Geo->DrawArgs["box1"].BaseVertexLocation;
+        mAllRitems.push_back(std::move(brickRitem3));
     }
 
 

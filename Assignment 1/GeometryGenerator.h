@@ -76,6 +76,9 @@ public:
 
 	
 	MeshData CreateBox(float width, float height, float depth, uint32 numSubdivisions);
+
+	MeshData CreateBox1(float width, float height, float depth, uint32 numSubdivisions);
+
 	MeshData CreateSphere(float radius, uint32 sliceCount, uint32 stackCount);
 	MeshData CreateGeosphere(float radius, uint32 numSubdivisions);
 	MeshData CreateTorus(float tubeRadius, float ringRadius, uint32 sliceCount, uint32 stackCount);
@@ -87,6 +90,8 @@ public:
 	MeshData CreateQuad(float x, float y, float w, float h, float depth);
 	MeshData CreateTriangularPrism(float baseWidth, float height, float depth);
 	MeshData CreatePyramid(float baseWidth, float height, float depth);
+
+	
 
 	void Subdivide(MeshData& meshData);
 

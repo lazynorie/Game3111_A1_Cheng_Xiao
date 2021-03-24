@@ -93,10 +93,12 @@ private:
 
     void LoadTextures();
     void BuildDescriptorHeaps();
-    void BuildConstantBufferViews();
+    //void BuildConstantBufferViews();
     void BuildRootSignature();
     void BuildShadersAndInputLayout();
     void BuildShapeGeometry();
+    void BuildLandGeometry();
+    void BuildTreeSpritesGeometry();
     void BuildPSOs();
     void BuildFrameResources();
     void BuildMaterials();
@@ -109,6 +111,8 @@ private:
     float GetHillsHeight(float x, float z)const;
     XMFLOAT3 GetHillsNormal(float x, float z)const;
     XMFLOAT3 GetTreePosition(float minX, float maxX, float minZ, float maxZ, float treeHeightOffset)const;
+
+    void BuildRenderGeoItem(int index, std::string itemName, std::string material, XMFLOAT3 scaling, XMFLOAT3 rotation, XMFLOAT3 translation);
 private:
 
     std::vector<std::unique_ptr<FrameResource>> mFrameResources;
@@ -156,6 +160,7 @@ private:
     float mRadius = 15.0f;
 
     POINT mLastMousePos;
+
     UINT objCBIndex = 0;
 };
 
@@ -212,7 +217,7 @@ bool ShapesApp::Initialize()
     BuildRenderItems();
     BuildFrameResources();
     BuildDescriptorHeaps();
-    BuildConstantBufferViews();
+    //BuildConstantBufferViews();
     BuildPSOs();
 
     // Execute the initialization commands.
@@ -534,21 +539,21 @@ void ShapesApp::LoadTextures()
         mCommandList.Get(), waterTex->Filename.c_str(),
         waterTex->Resource, waterTex->UploadHeap));
 
-   /* auto fenceTex = std::make_unique<Texture>();
-    fenceTex->Name = "fenceTex";
-    fenceTex->Filename = L"../../Textures/WireFence.dds";
-    ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
-        mCommandList.Get(), fenceTex->Filename.c_str(),
-        fenceTex->Resource, fenceTex->UploadHeap));
+    /* auto fenceTex = std::make_unique<Texture>();
+     fenceTex->Name = "fenceTex";
+     fenceTex->Filename = L"../../Textures/WireFence.dds";
+     ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+         mCommandList.Get(), fenceTex->Filename.c_str(),
+         fenceTex->Resource, fenceTex->UploadHeap));
 
-    auto treeArrayTex = std::make_unique<Texture>();
-    treeArrayTex->Name = "treeArrayTex";
-    treeArrayTex->Filename = L"../../Textures/treeArray.dds";
-    ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
-        mCommandList.Get(), treeArrayTex->Filename.c_str(),
-        treeArrayTex->Resource, treeArrayTex->UploadHeap));*/
+     auto treeArrayTex = std::make_unique<Texture>();
+     treeArrayTex->Name = "treeArrayTex";
+     treeArrayTex->Filename = L"../../Textures/treeArray.dds";
+     ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+         mCommandList.Get(), treeArrayTex->Filename.c_str(),
+         treeArrayTex->Resource, treeArrayTex->UploadHeap));*/
 
-    //mTextures[grassTex->Name] = std::move(grassTex);
+         //mTextures[grassTex->Name] = std::move(grassTex);
     mTextures[waterTex->Name] = std::move(waterTex);
     //mTextures[fenceTex->Name] = std::move(fenceTex);
     //mTextures[treeArrayTex->Name] = std::move(treeArrayTex);
@@ -556,22 +561,22 @@ void ShapesApp::LoadTextures()
 
 void ShapesApp::BuildDescriptorHeaps()
 {
-  /*  UINT objCount = (UINT)mOpaqueRitems.size();
+    /*  UINT objCount = (UINT)mOpaqueRitems.size();
 
-    // Need a CBV descriptor for each object for each frame resource,
-    // +1 for the perPass CBV for each frame resource.
-    UINT numDescriptors = (objCount + 1) * gNumFrameResources;
+      // Need a CBV descriptor for each object for each frame resource,
+      // +1 for the perPass CBV for each frame resource.
+      UINT numDescriptors = (objCount + 1) * gNumFrameResources;
 
-    // Save an offset to the start of the pass CBVs.  These are the last 3 descriptors.
-    mPassCbvOffset = objCount * gNumFrameResources;
+      // Save an offset to the start of the pass CBVs.  These are the last 3 descriptors.
+      mPassCbvOffset = objCount * gNumFrameResources;
 
-    D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-    cbvHeapDesc.NumDescriptors = numDescriptors;
-    cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    cbvHeapDesc.NodeMask = 0;
-    ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvHeapDesc,
-        IID_PPV_ARGS(&mCbvHeap)));*/
+      D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+      cbvHeapDesc.NumDescriptors = numDescriptors;
+      cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+      cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+      cbvHeapDesc.NodeMask = 0;
+      ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvHeapDesc,
+          IID_PPV_ARGS(&mCbvHeap)));*/
 
     D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
     srvHeapDesc.NumDescriptors = 4;
@@ -584,20 +589,20 @@ void ShapesApp::BuildDescriptorHeaps()
     //
     CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(mSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
-   // auto grassTex = mTextures["grassTex"]->Resource;
+    // auto grassTex = mTextures["grassTex"]->Resource;
     auto waterTex = mTextures["waterTex"]->Resource;
-  //  auto fenceTex = mTextures["fenceTex"]->Resource;
-    //auto treeArrayTex = mTextures["treeArrayTex"]->Resource;
+    //  auto fenceTex = mTextures["fenceTex"]->Resource;
+      //auto treeArrayTex = mTextures["treeArrayTex"]->Resource;
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-   /* srvDesc.Format = grassTex->GetDesc().Format;
-    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MostDetailedMip = 0;
-    srvDesc.Texture2D.MipLevels = -1;
-    md3dDevice->CreateShaderResourceView(grassTex.Get(), &srvDesc, hDescriptor);*/
+    /* srvDesc.Format = grassTex->GetDesc().Format;
+     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+     srvDesc.Texture2D.MostDetailedMip = 0;
+     srvDesc.Texture2D.MipLevels = -1;
+     md3dDevice->CreateShaderResourceView(grassTex.Get(), &srvDesc, hDescriptor);*/
 
-    // next descriptor
+     // next descriptor
     hDescriptor.Offset(1, mCbvSrvDescriptorSize);
 
     srvDesc.Format = waterTex->GetDesc().Format;
@@ -633,7 +638,8 @@ void ShapesApp::BuildDescriptorHeaps()
 //object CBVs for 1st frame resource, descriptors 2n to 3n−1 contain the objects CBVs for
 //the 2nd frame resource, and descriptors 3n, 3n + 1, and 3n + 2 contain the pass CBVs for the
 //0th, 1st, and 2nd frame resource
-void ShapesApp::BuildConstantBufferViews()
+
+/*void ShapesApp::BuildConstantBufferViews()
 {
     UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 
@@ -654,6 +660,7 @@ void ShapesApp::BuildConstantBufferViews()
             int heapIndex = frameIndex * objCount + i;
 
             //we can get a handle to the first descriptor in a heap with the ID3D12DescriptorHeap::GetCPUDescriptorHandleForHeapStart
+
             auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 
             //our heap has more than one descriptor,we need to know the size to increment in the heap to get to the next descriptor
@@ -688,7 +695,7 @@ void ShapesApp::BuildConstantBufferViews()
 
         md3dDevice->CreateConstantBufferView(&cbvDesc, handle);
     }
-}
+}*/
 
 //A root signature defines what resources need to be bound to the pipeline before issuing a draw call and
 //how those resources get mapped to shader input registers. there is a limit of 64 DWORDs that can be put in a root signature.
@@ -815,7 +822,7 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData box1 = geoGen.CreateBox1(1.0f, 1.0f, 1.0f, 3);
 
 
- 
+
 
 
     //
@@ -837,7 +844,7 @@ void ShapesApp::BuildShapeGeometry()
 
     UINT box1VertexOffset = wedgeVertexOffset + (UINT)wedge.Vertices.size();
 
-    
+
     // Cache the starting index for each object in the concatenated index buffer.
     UINT boxIndexOffset = 0;
     UINT gridIndexOffset = (UINT)box.Indices32.size();
@@ -851,7 +858,7 @@ void ShapesApp::BuildShapeGeometry()
     UINT wedgeIndexOffset = torusIndexOffset + (UINT)torus.Indices32.size();
 
     UINT box1IndexOffset = wedgeIndexOffset + (UINT)wedge.Indices32.size();
-    
+
     // Define the SubmeshGeometry that cover different 
     // regions of the vertex/index buffers.
 
@@ -926,79 +933,90 @@ void ShapesApp::BuildShapeGeometry()
         diamond.Vertices.size() +
         pyramid.Vertices.size() +
         torus.Vertices.size() +
-        wedge.Vertices.size()+
+        wedge.Vertices.size() +
 
-        box1.Vertices.size() ;
-        
+        box1.Vertices.size();
+
 
     std::vector<Vertex> vertices(totalVertexCount);
 
-   /* UINT k = 0;
+    UINT k = 0;
     for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = box.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::DarkGray);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = grid.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::ForestGreen);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = sphere.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Crimson);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = cylinder.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Gray);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < cone.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = cone.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::LightSeaGreen);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < triPrism.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = triPrism.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::DimGray);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = diamond.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Violet);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < pyramid.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = pyramid.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::SandyBrown);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < torus.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = torus.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Gold);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < wedge.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = wedge.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Gold);
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
     }
 
     for (size_t i = 0; i < box1.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = box1.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::SlateGray);
-    }*/
+        vertices[k].Normal = box.Vertices[i].Normal;
+        vertices[k].TexC = box.Vertices[i].TexC;
+    }
 
 
     std::vector<std::uint16_t> indices;
@@ -1051,7 +1069,7 @@ void ShapesApp::BuildShapeGeometry()
     geo->DrawArgs["torus"] = torusSubmesh;
     geo->DrawArgs["wedge"] = wedgeSubmesh;
     geo->DrawArgs["box1"] = box1Submesh;
-    
+
 
     mGeometries[geo->Name] = std::move(geo);
 }
@@ -1144,7 +1162,7 @@ void ShapesApp::BuildRenderItems()
     mRitemLayer[(int)RenderLayer::Transparent].push_back(wavesRitem.get());
 
     auto pyramidRitem = std::make_unique<RenderItem>();
-    XMStoreFloat4x4(&pyramidRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixRotationY(-nintydegrees)* XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+    XMStoreFloat4x4(&pyramidRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixRotationY(-nintydegrees) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
     pyramidRitem->ObjCBIndex = 0;
     pyramidRitem->Geo = mGeometries["shapeGeo"].get();
     pyramidRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -1188,7 +1206,7 @@ void ShapesApp::BuildRenderItems()
         if (i < 2)
         {
             auto FrontWall = std::make_unique<RenderItem>();
-            XMStoreFloat4x4(&FrontWall->World, XMMatrixScaling(7.0f, 5.0f, 1.0f) * XMMatrixTranslation(5.0f-10*i, 2.5f, -10.0f));
+            XMStoreFloat4x4(&FrontWall->World, XMMatrixScaling(7.0f, 5.0f, 1.0f) * XMMatrixTranslation(5.0f - 10 * i, 2.5f, -10.0f));
             FrontWall->ObjCBIndex = objCBIndex++;
             FrontWall->Geo = mGeometries["shapeGeo"].get();
             FrontWall->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -1246,7 +1264,7 @@ void ShapesApp::BuildRenderItems()
     for (int i = 0; i < 11; i++)
     {
         auto brickRitem = std::make_unique<RenderItem>();
-        XMStoreFloat4x4(&brickRitem->World, XMMatrixScaling(1.0f, 1.5f, 1.0f) * XMMatrixTranslation(-10.0f, 5.5f, 10.0f - 2*i));
+        XMStoreFloat4x4(&brickRitem->World, XMMatrixScaling(1.0f, 1.5f, 1.0f) * XMMatrixTranslation(-10.0f, 5.5f, 10.0f - 2 * i));
         brickRitem->ObjCBIndex = objCBIndex++;
         brickRitem->Geo = mGeometries["shapeGeo"].get();
         brickRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -1332,30 +1350,30 @@ void ShapesApp::BuildRenderItems()
     }
 
     // door
-        auto wedgeRitem = std::make_unique<RenderItem>();
-        XMStoreFloat4x4(&wedgeRitem->World, XMMatrixScaling(5.0f, 1.0f, 1.5f) * XMMatrixRotationY(-nintydegrees)* XMMatrixTranslation(0.0f, 0.5f, -12.5f));
-        wedgeRitem->ObjCBIndex = objCBIndex++;
-        wedgeRitem->Geo = mGeometries["shapeGeo"].get();
-        wedgeRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-        wedgeRitem->IndexCount = wedgeRitem->Geo->DrawArgs["wedge"].IndexCount;
-        wedgeRitem->StartIndexLocation = wedgeRitem->Geo->DrawArgs["wedge"].StartIndexLocation;
-        wedgeRitem->BaseVertexLocation = wedgeRitem->Geo->DrawArgs["wedge"].BaseVertexLocation;
-        mAllRitems.push_back(std::move(wedgeRitem));
+    auto wedgeRitem = std::make_unique<RenderItem>();
+    XMStoreFloat4x4(&wedgeRitem->World, XMMatrixScaling(5.0f, 1.0f, 1.5f) * XMMatrixRotationY(-nintydegrees) * XMMatrixTranslation(0.0f, 0.5f, -12.5f));
+    wedgeRitem->ObjCBIndex = objCBIndex++;
+    wedgeRitem->Geo = mGeometries["shapeGeo"].get();
+    wedgeRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    wedgeRitem->IndexCount = wedgeRitem->Geo->DrawArgs["wedge"].IndexCount;
+    wedgeRitem->StartIndexLocation = wedgeRitem->Geo->DrawArgs["wedge"].StartIndexLocation;
+    wedgeRitem->BaseVertexLocation = wedgeRitem->Geo->DrawArgs["wedge"].BaseVertexLocation;
+    mAllRitems.push_back(std::move(wedgeRitem));
     //Diamond
-        auto DiamondRitem = std::make_unique<RenderItem>();
-        XMStoreFloat4x4(&DiamondRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)* XMMatrixTranslation(0.0f, 3.5f, 0.0f));
-        DiamondRitem->ObjCBIndex = objCBIndex++;
-        DiamondRitem->Geo = mGeometries["shapeGeo"].get();
-        DiamondRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-        DiamondRitem->IndexCount = DiamondRitem->Geo->DrawArgs["diamond"].IndexCount;
-        DiamondRitem->StartIndexLocation = DiamondRitem->Geo->DrawArgs["diamond"].StartIndexLocation;
-        DiamondRitem->BaseVertexLocation = DiamondRitem->Geo->DrawArgs["diamond"].BaseVertexLocation;
-        mAllRitems.push_back(std::move(DiamondRitem));
-  
+    auto DiamondRitem = std::make_unique<RenderItem>();
+    XMStoreFloat4x4(&DiamondRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(0.0f, 3.5f, 0.0f));
+    DiamondRitem->ObjCBIndex = objCBIndex++;
+    DiamondRitem->Geo = mGeometries["shapeGeo"].get();
+    DiamondRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    DiamondRitem->IndexCount = DiamondRitem->Geo->DrawArgs["diamond"].IndexCount;
+    DiamondRitem->StartIndexLocation = DiamondRitem->Geo->DrawArgs["diamond"].StartIndexLocation;
+    DiamondRitem->BaseVertexLocation = DiamondRitem->Geo->DrawArgs["diamond"].BaseVertexLocation;
+    mAllRitems.push_back(std::move(DiamondRitem));
+
 
 
     // All the render items are opaque.
-        mAllRitems.push_back(std::move(wavesRitem));
+    mAllRitems.push_back(std::move(wavesRitem));
 
     for (auto& e : mAllRitems)
         mOpaqueRitems.push_back(e.get());

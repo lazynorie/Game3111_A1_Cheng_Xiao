@@ -108,6 +108,7 @@ private:
 
     float GetHillsHeight(float x, float z)const;
     XMFLOAT3 GetHillsNormal(float x, float z)const;
+    XMFLOAT3 GetTreePosition(float minX, float maxX, float minZ, float maxZ, float treeHeightOffset)const;
 private:
 
     std::vector<std::unique_ptr<FrameResource>> mFrameResources;
@@ -127,6 +128,7 @@ private:
     std::unordered_map<std::string, ComPtr<ID3D12PipelineState>> mPSOs;
 
     std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+    std::vector<D3D12_INPUT_ELEMENT_DESC> mTreeSpriteInputLayout;
 
     RenderItem* mWavesRitem = nullptr;
     // List of all the render items.
@@ -154,6 +156,7 @@ private:
     float mRadius = 15.0f;
 
     POINT mLastMousePos;
+    UINT objCBIndex = 0;
 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
@@ -526,7 +529,7 @@ void ShapesApp::LoadTextures()
 
     auto waterTex = std::make_unique<Texture>();
     waterTex->Name = "waterTex";
-    waterTex->Filename = L"../../Textures/water1.dds";
+    waterTex->Filename = L"water1.dds";
     ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
         mCommandList.Get(), waterTex->Filename.c_str(),
         waterTex->Resource, waterTex->UploadHeap));
@@ -927,7 +930,7 @@ void ShapesApp::BuildShapeGeometry()
 
     std::vector<Vertex> vertices(totalVertexCount);
 
-    UINT k = 0;
+   /* UINT k = 0;
     for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = box.Vertices[i].Position;
@@ -992,7 +995,7 @@ void ShapesApp::BuildShapeGeometry()
     {
         vertices[k].Pos = box1.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(DirectX::Colors::SlateGray);
-    }
+    }*/
 
 
     std::vector<std::uint16_t> indices;

@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Shader">
       <UniqueIdentifier>{3e51eb0f-57cd-41af-b188-06799f93ef78}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{d1c7c0c4-aabf-4f63-8da7-f4d9e8e2db09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FrameResource.cpp">
@@ -100,5 +103,135 @@
     <FxCompile Include="Shaders\VS3.hlsl">
       <Filter>Source Files\Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Textures\bricks.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\bricks_nmap.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\bricks2.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\bricks2_nmap.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\bricks3.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\canada.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\checkboard.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\default_nmap.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\desertcube1024.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\flagArray.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\grass.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\grasscube1024.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\head_diff.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\head_norm.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\ice.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\jacket_diff.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\jacket_norm.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\pants_diff.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\pants_norm.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\snowcube1024.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\stone.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\sunsetcube1024.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tile.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tile_nmap.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tree0.bmp">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tree01S.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tree1.bmp">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tree02S.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tree2.bmp">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\tree35S.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\treearray.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\treeArray2.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\uk.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\upBody_diff.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\upbody_norm.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\us.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\water1.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\white1x1.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\WireFence.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\WoodCrate01.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Textures\WoodCrate02.dds">
+      <Filter>Textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Textures\texassemble.exe">
+      <Filter>Textures</Filter>
+    </None>
   </ItemGroup>
 </Project>

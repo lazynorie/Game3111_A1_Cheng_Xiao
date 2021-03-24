@@ -224,6 +224,52 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Textures\bricks.dds" />
+    <Image Include="..\Textures\bricks2.dds" />
+    <Image Include="..\Textures\bricks2_nmap.dds" />
+    <Image Include="..\Textures\bricks3.dds" />
+    <Image Include="..\Textures\bricks_nmap.dds" />
+    <Image Include="..\Textures\canada.dds" />
+    <Image Include="..\Textures\checkboard.dds" />
+    <Image Include="..\Textures\default_nmap.dds" />
+    <Image Include="..\Textures\desertcube1024.dds" />
+    <Image Include="..\Textures\flagArray.dds" />
+    <Image Include="..\Textures\grass.dds" />
+    <Image Include="..\Textures\grasscube1024.dds" />
+    <Image Include="..\Textures\head_diff.dds" />
+    <Image Include="..\Textures\head_norm.dds" />
+    <Image Include="..\Textures\ice.dds" />
+    <Image Include="..\Textures\jacket_diff.dds" />
+    <Image Include="..\Textures\jacket_norm.dds" />
+    <Image Include="..\Textures\pants_diff.dds" />
+    <Image Include="..\Textures\pants_norm.dds" />
+    <Image Include="..\Textures\snowcube1024.dds" />
+    <Image Include="..\Textures\stone.dds" />
+    <Image Include="..\Textures\sunsetcube1024.dds" />
+    <Image Include="..\Textures\tile.dds" />
+    <Image Include="..\Textures\tile_nmap.dds" />
+    <Image Include="..\Textures\tree0.bmp" />
+    <Image Include="..\Textures\tree01S.dds" />
+    <Image Include="..\Textures\tree02S.dds" />
+    <Image Include="..\Textures\tree1.bmp" />
+    <Image Include="..\Textures\tree2.bmp" />
+    <Image Include="..\Textures\tree35S.dds" />
+    <Image Include="..\Textures\treearray.dds" />
+    <Image Include="..\Textures\treeArray2.dds" />
+    <Image Include="..\Textures\uk.dds" />
+    <Image Include="..\Textures\upBody_diff.dds" />
+    <Image Include="..\Textures\upbody_norm.dds" />
+    <Image Include="..\Textures\us.dds" />
+    <Image Include="..\Textures\water1.dds" />
+    <Image Include="..\Textures\white1x1.dds" />
+    <Image Include="..\Textures\WireFence.dds" />
+    <Image Include="..\Textures\WoodCrate01.dds" />
+    <Image Include="..\Textures\WoodCrate02.dds" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Textures\texassemble.exe" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
